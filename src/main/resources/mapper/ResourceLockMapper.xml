@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hgy.distributed.lock.mysql.dao.ResourceLockDao">
+
+    <sql id="resourceLock">
+        id,resource_name,node_info,`count`,`desc`,gmt_modified,gmt_create
+    </sql>
+    <!--    根据id查询资源对象信息-->
+    <select id="get" resultType="com.hgy.distributed.lock.mysql.model.ResourceLockEntity">
+        select
+        <include refid="resourceLock"/>
+        from resource_lock
+        where id =#{id,jdbcType=BIGINT}
+    </select>
+    <select id="getByResourceName" resultType="com.hgy.distributed.lock.mysql.model.ResourceLockEntity">
+        select
+        <include refid="resourceLock"/>
+        from resource_lock
+        where resource_name =#{name,jdbcType=VARCHAR}
+        for update
+    </select>
+    <update id="update">
+
+    </update>
+    <update id="updateByResourceNameEnter">
+        update resource_lock
+        set count =count+1
+        where resource_name =#{resourceName,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByResourceNameOut">
+        update resource_lock
+       set count = IF(count  &lt;  1, 0, count -1)
+        where resource_name =#{resourceName,jdbcType=VARCHAR}
+    </update>
+    <delete id="delete">
+        delete from resource_lock
+        where id =#{id,jdbcType=BIGINT}
+    </delete>
+    <delete id="deleteByResourceName">
+     delete from resource_lock
+        where resource_name =#{resourceName,jdbcType=VARCHAR}
+    </delete>
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+            insert  into  resource_lock
+             (resource_name, node_info, "desc") values (
+                #{resourceName,jdbcType=VARCHAR} ,#{nodeInfo,jdbcType=VARCHAR} ,#{desc,jdbcType=VARCHAR}
+             )
+    </insert>
+</mapper>

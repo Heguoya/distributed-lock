@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hgy.mysqloptpess.dao.UserDao">
+
+    <sql id="baseColumnList">
+        id  ,name,age,version,time
+    </sql>
+
+    <resultMap id="userMap" type="com.hgy.mysqloptpess.model.UserEntity">
+        <id column="id" property="id"/>
+        <result column="age" property="age"/>
+        <result column="name" property="name"/>
+        <result column="version" property="version"/>
+        <result column="time" property="time"/>
+    </resultMap>
+    <!--    根据id查询用户信息-->
+    <select id="selectByPrimaryKey" resultMap="userMap">
+        select
+        <include refid="baseColumnList"/>
+        from
+        user
+        where id =#{id,jdbcType=BIGINT}
+    </select>
+    <!--    根据版本号更新用户信息-->
+    <update id="updateOptimisticLockByVersion">
+        update user
+        set
+        <if test="age != null">
+            age =#{age,jdbcType=INTEGER},
+        </if>
+        <if test="name != null">
+            name =#{name,jdbcType=VARCHAR},
+        </if>
+        version =version+1
+        where id=#{id,jdbcType=BIGINT}
+        and version =#{version,jdbcType=BIGINT}
+    </update>
+    <!--    根据时间戳更新用户信息-->
+    <update id="updateOptimisticLockByTime">
+        update user
+        set
+        <if test="age != null">
+            age =#{age,jdbcType=INTEGER},
+        </if>
+        <if test="name != null">
+            name =#{name,jdbcType=VARCHAR}
+        </if>
+        where id=#{id,jdbcType=BIGINT}
+        and time =#{time ,jdbcType=BIGINT}
+    </update>
+    <!--    悲观锁更新用户信息-->
+    <update id="updatePessimisticLock">
+        update user
+        set
+        <if test="age != null">
+            age =#{age,jdbcType=INTEGER},
+        </if>
+        <if test="name != null">
+            name =#{name,jdbcType=VARCHAR}
+        </if>
+        where id=#{id,jdbcType=BIGINT}
+    </update>
+    <select id="select" resultMap="userMap">
+        select
+        <include refid="baseColumnList"/>
+        from
+        user
+        where id =#{id,jdbcType=BIGINT}
+        for update
+    </select>
+</mapper>
