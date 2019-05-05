@@ -4,7 +4,7 @@
 <mapper namespace="com.hgy.distributed.lock.mysql.dao.ResourceLockDao">
 
     <sql id="resourceLock">
-        id,resource_name,node_info,`count`,`desc`,gmt_modified,gmt_create
+        id,resource_name,node_info,`count`,description,gmt_modified,gmt_create
     </sql>
     <!--    根据id查询资源对象信息-->
     <select id="get" resultType="com.hgy.distributed.lock.mysql.model.ResourceLockEntity">
@@ -42,9 +42,9 @@
         where resource_name =#{resourceName,jdbcType=VARCHAR}
     </delete>
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-            insert  into  resource_lock
-             (resource_name, node_info, "desc") values (
-                #{resourceName,jdbcType=VARCHAR} ,#{nodeInfo,jdbcType=VARCHAR} ,#{desc,jdbcType=VARCHAR}
-             )
+     INSERT INTO resource_lock ( resource_name, node_info, description )
+VALUES
+	( #{resourceName,jdbcType=VARCHAR} ,#{nodeInfo,jdbcType=VARCHAR} ,#{description,jdbcType=VARCHAR}
+	)
     </insert>
 </mapper>

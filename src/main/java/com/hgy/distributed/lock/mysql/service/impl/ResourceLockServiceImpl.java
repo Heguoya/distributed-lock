@@ -7,9 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.concurrent.locks.LockSupport;
-import java.util.concurrent.locks.ReentrantLock;
-
 /**
  * @author heguoya
  * @version 1.0
@@ -40,17 +37,11 @@ public class ResourceLockServiceImpl implements ResourceLockService {
         ResourceLockEntity byResourceName = resourceLockDao.getByResourceName(resourceName.getResourceName());
         if (byResourceName == null) {
             int insert = resourceLockDao.insert(resourceName);
-            if (insert > 0) {
-                return true;
-            }
-            return false;
+            return insert > 0;
         } else {
             if (byResourceName.getNodeInfo().equals(resourceName.getNodeInfo())) {
                 int i = resourceLockDao.updateByResourceNameEnter(byResourceName);
-                if (i > 0) {
-                    return true;
-                }
-                return false;
+                return i > 0;
             } else {
                 return false;
             }
@@ -66,12 +57,19 @@ public class ResourceLockServiceImpl implements ResourceLockService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean unLock(ResourceLockEntity resourceName) {
-        ResourceLockEntity byResourceName = resourceLockDao.getByResourceName(resourceName.getResourceName());
+        String name = resourceName.getResourceName();
+        ResourceLockEntity byResourceName = resourceLockDao.getByResourceName(name);
         if (byResourceName == null) {
             return false;
-        }else {
+        } else {
             if (resourceName.getNodeInfo().equals(byResourceName.getNodeInfo())) {
-                int i = resourceLockDao.updateByResourceNameOut(byResourceName);
+                if (byResourceName.getCount() > 1) {
+                    int i = resourceLockDao.updateByResourceNameOut(byResourceName);
+                    return i > 0;
+                } else {
+                    int i = resourceLockDao.deleteByResourceName(name);
+                    return i > 0;
+                }
             }
         }
         return false;
@@ -80,7 +78,7 @@ public class ResourceLockServiceImpl implements ResourceLockService {
 
     @Override
     public ResourceLockEntity getByResourceName(String name) {
-        return null;
+        return resourceLockDao.getByResourceName(name);
     }
 
     @Override

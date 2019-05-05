@@ -19,6 +19,13 @@ public interface UserService {
     UserEntity getUser(Long id);
 
     /**
+     * 添加用户
+     * @param userEntity
+     * @return
+     */
+    int insertUser(UserEntity userEntity);
+
+    /**
      * 更新用户信息
      *
      * @param userEntity

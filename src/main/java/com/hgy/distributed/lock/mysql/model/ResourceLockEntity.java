@@ -33,7 +33,7 @@ public class ResourceLockEntity {
     /**
      * 描述
      */
-  private String desc;
+  private String description;
     /**
      * 修改时间
      */

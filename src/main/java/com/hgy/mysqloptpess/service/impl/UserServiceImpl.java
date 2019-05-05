@@ -25,6 +25,17 @@ public class UserServiceImpl implements UserService {
         return userDao.selectByPrimaryKey(id);
     }
 
+    /**
+     * 添加用户
+     *
+     * @param userEntity
+     * @return
+     */
+    @Override
+    public int insertUser(UserEntity userEntity) {
+        return 0;
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int update(UserEntity userEntity) throws Exception {

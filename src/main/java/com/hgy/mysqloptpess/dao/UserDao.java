@@ -1,6 +1,7 @@
 package com.hgy.mysqloptpess.dao;
 
 import com.hgy.mysqloptpess.model.UserEntity;
+import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
  * @date 2019/4/23 21:15
  */
 @Repository
+@Mapper
 public interface UserDao {
     /**
      *  select user entity by primary key

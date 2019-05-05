@@ -1,6 +1,7 @@
 package com.hgy.distributed.lock.mysql.dao;
 
 import com.hgy.distributed.lock.mysql.model.ResourceLockEntity;
+import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
  * @date 2019/4/25 21:08
  */
 @Repository
+@Mapper
 public interface ResourceLockDao {
 
     /**
