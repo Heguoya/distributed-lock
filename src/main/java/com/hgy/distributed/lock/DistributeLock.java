@@ -30,7 +30,7 @@ public interface DistributeLock {
     /**
      * 尝试获取锁
      * @param key 锁key
-     * @param acquireTimeoutInMS 获取锁等待时间
+     * @param acquireTimeoutInMS 轮训时间间隔
      * @param retry 重试次数
      * @return
      */

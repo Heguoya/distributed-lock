@@ -4,7 +4,6 @@ import com.hgy.distributed.lock.DistributeLock;
 import com.hgy.distributed.lock.mysql.model.ResourceLockEntity;
 import com.hgy.distributed.lock.mysql.service.ResourceLockService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -90,7 +89,7 @@ public class MysqlDistributedLock implements DistributeLock {
      * 尝试获取锁
      *
      * @param key                锁key
-     * @param acquireTimeoutInMS 获取锁等待时间
+     * @param acquireTimeoutInMS 轮训时间间隔
      * @param retry              重试次数
      * @return
      */
@@ -99,13 +98,15 @@ public class MysqlDistributedLock implements DistributeLock {
         ResourceLockEntity resourceLockEntity = getResourceLockEntity();
         resourceLockEntity.setResourceName(key);
         threadLocal.set(resourceLockEntity);
-        Long startTime = System.currentTimeMillis();
         for (int i = 0; i < retry; i++) {
             if (lockService.getLock(resourceLockEntity)) {
                 return true;
             }
-            Long endTime = System.currentTimeMillis();
-            if (acquireTimeoutInMS < endTime - startTime) {
+            try {
+                Thread.sleep(acquireTimeoutInMS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                log.error("tryLock interrupted", e);
                 return false;
             }
         }
