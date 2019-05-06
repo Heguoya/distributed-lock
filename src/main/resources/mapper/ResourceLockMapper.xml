@@ -3,17 +3,30 @@
 
 <mapper namespace="com.hgy.distributed.lock.mysql.dao.ResourceLockDao">
 
+
     <sql id="resourceLock">
         id,resource_name,node_info,`count`,description,gmt_modified,gmt_create
     </sql>
+
+    <resultMap id="resource" type="com.hgy.distributed.lock.mysql.model.ResourceLockEntity">
+        <id property="id" column="id"/>
+        <result property="resourceName" column="resource_name"/>
+        <result property="nodeInfo" column="node_info"/>
+        <result property="description" column="description"/>
+        <result property="count" column="count"/>
+        <result property="gmtCreate" column="gmt_create"/>
+        <result property="gmtModified" column="gmt_modified"/>
+    </resultMap>
+
+
     <!--    根据id查询资源对象信息-->
-    <select id="get" resultType="com.hgy.distributed.lock.mysql.model.ResourceLockEntity">
+    <select id="get" resultMap="resource">
         select
         <include refid="resourceLock"/>
         from resource_lock
         where id =#{id,jdbcType=BIGINT}
     </select>
-    <select id="getByResourceName" resultType="com.hgy.distributed.lock.mysql.model.ResourceLockEntity">
+    <select id="getByResourceName" resultMap="resource">
         select
         <include refid="resourceLock"/>
         from resource_lock

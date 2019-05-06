@@ -63,7 +63,7 @@ public class ResourceLockServiceImpl implements ResourceLockService {
             return false;
         } else {
             if (resourceName.getNodeInfo().equals(byResourceName.getNodeInfo())) {
-                if (byResourceName.getCount() > 1) {
+                if (byResourceName.getCount() >= 1) {
                     int i = resourceLockDao.updateByResourceNameOut(byResourceName);
                     return i > 0;
                 } else {

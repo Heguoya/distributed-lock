@@ -26,6 +26,7 @@ public class RedisDistributedLock implements DistributeLock {
     private final String lockValue;
 
     private boolean locked = false;
+    private static final String LOCK_SECONDS = "30";
 
     /**
      * 使用脚本在redis服务器执行这个逻辑可以在一定程度上保证此操作的原子性
@@ -73,7 +74,9 @@ public class RedisDistributedLock implements DistributeLock {
     @Override
     public boolean lock() {
         while (true) {
-            if (redisTemplate.execute(SETNX_AND_EXPIRE_SCRIPT, Collections.singletonList(lockKey), lockValue)) {
+            if (redisTemplate.execute(SETNX_AND_EXPIRE_SCRIPT, Collections.singletonList(lockKey), lockValue,
+                    LOCK_SECONDS)) {
+                locked = true;
                 return true;
             }
             // 休息5ms
@@ -88,7 +91,7 @@ public class RedisDistributedLock implements DistributeLock {
      */
     @Override
     public boolean tryLock() {
-        return redisTemplate.execute(SETNX_AND_EXPIRE_SCRIPT, Collections.singletonList(lockKey), lockValue);
+        return tryLock(lockKey);
     }
 
     /**
@@ -99,7 +102,9 @@ public class RedisDistributedLock implements DistributeLock {
      */
     @Override
     public boolean tryLock(String key) {
-        return redisTemplate.execute(SETNX_AND_EXPIRE_SCRIPT, Collections.singletonList(key), lockValue);
+        locked = redisTemplate.execute(SETNX_AND_EXPIRE_SCRIPT, Collections.singletonList(key), lockValue,
+                LOCK_SECONDS);
+        return locked;
     }
 
     /**
